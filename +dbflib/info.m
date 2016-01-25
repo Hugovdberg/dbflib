@@ -1,6 +1,6 @@
 function info = info(fid)
 %DBFINFO Read header information from DBF file.
-    dc = dbf.mixin.DBFConsts;
+    dc = dbflib.mixin.DBFConsts;
 
     % Open file if string is passed
     standalone = ischar(fid);
@@ -57,7 +57,7 @@ function info = info(fid)
                      dc.LITTLE_ENDIAN);
 
     % Convert DBF field types to MATLAB types.
-    typeConv = dbf.mixin.getConverter(upper(dbftypes));
+    typeConv = dbflib.mixin.getConverter(upper(dbftypes));
 
     % Read field lengths and precision. Calculate field offset within
     % record from lengths.
@@ -84,7 +84,7 @@ function info = info(fid)
                   dc.LITTLE_ENDIAN);
 
     % Return a struct array.
-    dealc = dbf.mixin.dealc;
+    dealc = dbflib.mixin.dealc;
     [fieldInfo(1:numFields).Name] = names{:};
     [fieldInfo.RawType] = dealc(cellstr(dbftypes));
     [fieldInfo.Type] = typeConv.MATLABType;

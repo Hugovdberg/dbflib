@@ -1,7 +1,7 @@
 function [dbfData, dbfInfo] = read(file, records, fields)
 %READ Read the specified records and fields from a DBF file.
 
-    dc = dbf.mixin.DBFConsts;
+    dc = dbflib.mixin.DBFConsts;
 
     standalone = ischar(file);
     if standalone
@@ -18,13 +18,13 @@ function [dbfData, dbfInfo] = read(file, records, fields)
         fid = file;
     end
 
-    dbfInfo = dbf.info(fid);
+    dbfInfo = dbflib.info(fid);
 
     if nargin < 3
         fieldsIndex = 1:dbfInfo.NumFields;
         dbfInfo.RequestedFieldNames = {dbfInfo.FieldInfo.Name};
     else
-        fieldsIndex = dbf.mixin.validateFields(dbfInfo, fields);
+        fieldsIndex = dbflib.mixin.validateFields(dbfInfo, fields);
         dbfInfo.RequestedFieldNames = {dbfInfo.FieldInfo(fieldsIndex).Name};
     end
 
