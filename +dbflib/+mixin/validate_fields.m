@@ -1,4 +1,4 @@
-function fieldsIndex = validateFields(info, fields)
+function fieldsIndex = validate_fields(info, fields)
 %VALIDATEFIELDS Determines index of fields to read from DBF.
 
 allFields = {info.FieldInfo.Name};

@@ -1,9 +1,9 @@
-function typeConverters = getConverter(dbftypes)
+function typeConverters = get_converter(dbftypes)
 % Construct struct array with MATLAB types & conversion function handles.
 
-    % typeidx has ascii values for N, F, C and D (in that order)
+    % typeidx has ascii values for N, F, C, D, and L (in that order)
     typeidx = [78, 70, 67, 68, 76];
-    typename = {'double', 'double', 'char', 'double', 'logical'};
+    typename = {'int', 'double', 'char', 'date', 'logical'};
     typeconv = {@dbflib.mixin.str2double, ...
                 @dbflib.mixin.str2double, ...
                 @cellstr, ...

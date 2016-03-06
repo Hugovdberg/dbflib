@@ -45,7 +45,6 @@ function info = info(fid)
                  dc.FIELD_NAME_DATATYPE, ...
                  dc.FIELD_RECORD_LENGTH-dc.FIELD_NAME_NUMVALS, ...
                  dc.LITTLE_ENDIAN);
-    data(data == 0) = ' '; % Replace nulls with blanks
     names = cellstr(data')';
 
     % Read field types.
@@ -57,7 +56,7 @@ function info = info(fid)
                      dc.LITTLE_ENDIAN);
 
     % Convert DBF field types to MATLAB types.
-    typeConv = dbflib.mixin.getConverter(upper(dbftypes));
+    typeConv = dbflib.mixin.get_converter(upper(dbftypes));
 
     % Read field lengths and precision. Calculate field offset within
     % record from lengths.

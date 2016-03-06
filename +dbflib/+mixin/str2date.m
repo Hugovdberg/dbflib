@@ -6,6 +6,11 @@ function out = str2date(in)
     end
 
     for k = size(in, 1):-1:1
-        out{k} = datenummx([sscanf(in(k, :), '%4d%2d%2d')', 0, 0, 0]);
+        arr = sscanf(in(k, :), '%4d%2d%2d')';
+        if ~all(arr==0)
+            out{k} = datenummx(arr);
+        else
+            out{k} = NaN;
+        end
     end
 end
