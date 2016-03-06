@@ -5,6 +5,7 @@ classdef DBFConsts
     properties (Constant)
         % File reading constants
         READ_BINARY = 'rb';
+        WRITE_BINARY = 'wb';
         BIG_ENDIAN = 'ieee-be';
         LITTLE_ENDIAN = 'ieee-le';
         BEGIN_OF_FILE = -1;
@@ -24,7 +25,9 @@ classdef DBFConsts
         % Header indices
         FILE_HEADER_LENGTH = 32;
         FIELD_RECORD_LENGTH = 32;
+        HEADER_TERMINATOR = 13;
         HEADER_TERMINATOR_LENGTH = 1;
+        FILE_TERMINATOR = 26;
 
         % DBF_VERSION
         DBF_VERSION_OFFSET = 0;
@@ -65,11 +68,13 @@ classdef DBFConsts
         FIELD_NAME_OFFSET = 0;
         FIELD_NAME_NUMVALS = 11;
         FIELD_NAME_DATATYPE = '11*uint8=>char';
+        FIELD_WRITE_NAME_DATATYPE = '11*uint8';
 
         % FIELD_TYPE
         FIELD_TYPE_OFFSET = 11;
         FIELD_TYPE_NUMVALS = 1;
         FIELD_TYPE_DATATYPE = 'uint8=>char';
+        FIELD_WRITE_TYPE_DATATYPE = 'uint8';
 
         % FIELD_LENGTH
         FIELD_LENGTH_OFFSET = 16;
