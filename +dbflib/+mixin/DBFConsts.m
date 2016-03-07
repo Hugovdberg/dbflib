@@ -12,6 +12,7 @@ classdef DBFConsts
         CURRENT_POS = 0;
         END_OF_FILE = 1;
         READ_CONTIGUOUS = 0;
+        WRITE_CONTIGUOUS = 0;
 
         % Data types 
         NO_DATA = -1e38;

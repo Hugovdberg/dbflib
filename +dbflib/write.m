@@ -3,9 +3,8 @@ function write(file, data, info)
 
     const = dbflib.mixin.DBFConsts;
 
-    if nargin < 3
-        info = dbflib.mixin.build_info(data);
-    end
+    narginchk(3, 3)
+    info = dbflib.mixin.build_info(data, info);
     
     standalone = ischar(file);
     if standalone
@@ -14,12 +13,12 @@ function write(file, data, info)
             file = [file, '.dbf'];
         end
 
-        if exist(file, 'file')
-            choice = questdlg('Overwrite file?', 'Confirm overwriting', 'No');
-            if ~strcmpi(choice, 'yes')
-                return
-            end
-        end
+%         if exist(file, 'file')
+%             choice = questdlg('Overwrite file?', 'Confirm overwriting', 'No');
+%             if ~strcmpi(choice, 'yes')
+%                 return
+%             end
+%         end
         [fid, errmsg] = fopen(file, const.WRITE_BINARY, const.LITTLE_ENDIAN);
         assert(isempty(errmsg), ...
                'DBFREAD:OpenFileError', ...
@@ -29,6 +28,13 @@ function write(file, data, info)
     end
 
     try
+        frewind(fid);
+        file_length = info.HeaderLength + ...
+            info.NumRecords*info.RecordLength + ...
+            const.HEADER_TERMINATOR_LENGTH;
+        fwrite(fid, zeros(file_length, 1), const.INT8, ...
+               const.WRITE_CONTIGUOUS, const.LITTLE_ENDIAN);
+
         fseek(fid, const.DBF_VERSION_OFFSET, const.BEGIN_OF_FILE);
         fwrite(fid, 3, const.INT8, 0, const.LITTLE_ENDIAN);
 
@@ -127,19 +133,17 @@ function write(file, data, info)
             end
             offset = info.HeaderLength + ...
                 const.DELETION_INDICATOR_LENGTH + ...
-                info.FieldInfo(k).Offset + ...
-                info.FieldInfo(k).Length - ...
-                info.RecordLength;
-            fseek(fid, offset, const.BEGIN_OF_FILE);
-%             fwrite(fid, fielddata(:, 1)', writeprec, ...
-%                    0, ...
-%                    const.LITTLE_ENDIAN)
-%             if info.NumRecords > 1
-%                 fwrite(fid, fielddata(:, 2:end), writeprec, ...
-%                        info.RecordLength-fieldlength, ...
-%                        const.LITTLE_ENDIAN)
-%             end
-            fwrite(fid, fielddata, writeprec, info.RecordLength-fieldlength, const.LITTLE_ENDIAN);
+                info.FieldInfo(k).Offset;
+            stat = fseek(fid, offset, const.BEGIN_OF_FILE);
+            assert(stat == 0, 'Invalid position %d', offset)
+            fwrite(fid, fielddata(:, 1)', writeprec, ...
+                   0, ...
+                   const.LITTLE_ENDIAN);
+            if info.NumRecords > 1
+                fwrite(fid, fielddata(:, 2:end), writeprec, ...
+                       info.RecordLength-fieldlength, ...
+                       const.LITTLE_ENDIAN);
+            end
         end
         fseek(fid, ...
               info.HeaderLength+const.HEADER_TERMINATOR_LENGTH+...
