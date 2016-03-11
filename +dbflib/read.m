@@ -3,20 +3,8 @@ function [data, info] = read(file, records, fields)
 
     const = dbflib.mixin.DBFConsts;
 
-    standalone = ischar(file);
-    if standalone
-        [~, ~, ext] = fileparts(file);
-        if isempty(ext)
-            file = [file, '.dbf'];
-        end
-
-        [fid, errmsg] = fopen(file, const.READ_BINARY, const.LITTLE_ENDIAN);
-        assert(isempty(errmsg), ...
-               'DBFREAD:OpenFileError', ...
-               'Failed to open file %s.\nError: %s', file, errmsg)
-    else
-        fid = file;
-    end
+    [fid, standalone] = dbflib.mixin.get_file_handle(file, ...
+                                                     const.READ_BINARY);
 
     info = dbflib.info(fid);
 
@@ -31,7 +19,7 @@ function [data, info] = read(file, records, fields)
     if nargin < 2 || isempty(records) || ~all(isfinite(records))
         records = 1:info.NumRecords;
     elseif max(records) > info.NumRecords
-        error('DBFREAD:invalidRecordNumber', ...
+        error('DBFLIB:READ:invalidRecordNumber', ...
               'Record# %d does not exist. (#records: %d)',...
               max(records), info.NumRecords)
     end

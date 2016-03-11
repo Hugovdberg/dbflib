@@ -1,13 +1,9 @@
-function info = info(fid)
+function info = info(file)
 %DBFINFO Read header information from DBF file.
     dc = dbflib.mixin.DBFConsts;
 
-    % Open file if string is passed
-    standalone = ischar(fid);
-    if standalone
-        fid = fopen(fid, dc.READ_BINARY);
-    end
-    info.Filename = fopen(fid);
+    [fid, standalone] = dbflib.mixin.get_file_handle(file, ...
+                                                     const.READ_BINARY);
 
     fseek(fid, dc.DBF_VERSION_OFFSET, dc.BEGIN_OF_FILE);
     data = fread(fid, ...

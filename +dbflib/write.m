@@ -1,31 +1,14 @@
 function write(file, data, info)
 %WRITE Writes cell array as DBF file
+%   Base function to write a cell array to a dBase database file (DBF).
 
     const = dbflib.mixin.DBFConsts;
 
     narginchk(3, 3)
     info = dbflib.mixin.build_info(data, info);
     
-    standalone = ischar(file);
-    if standalone
-        [~, ~, ext] = fileparts(file);
-        if isempty(ext)
-            file = [file, '.dbf'];
-        end
-
-%         if exist(file, 'file')
-%             choice = questdlg('Overwrite file?', 'Confirm overwriting', 'No');
-%             if ~strcmpi(choice, 'yes')
-%                 return
-%             end
-%         end
-        [fid, errmsg] = fopen(file, const.WRITE_BINARY, const.LITTLE_ENDIAN);
-        assert(isempty(errmsg), ...
-               'DBFREAD:OpenFileError', ...
-               'Failed to open file %s.\nError: %s', file, errmsg)
-    else
-        fid = file;
-    end
+    [fid, standalone] = dbflib.mixin.get_file_handle(file, ...
+                                                     const.WRITE_BINARY);
 
     try
         frewind(fid);
@@ -128,6 +111,14 @@ function write(file, data, info)
                         fielddata = fielddata(:, 1:fieldlength);
                     end
                     fielddata = fielddata';
+                case 'L'
+                    writeprec = '1*uint8';
+                    fielddata = cell(size(data, 1), 1);
+                    tdata = [data{:, k}];
+                    [fielddata{tdata == 0}] = deal('F');
+                    [fielddata{tdata > 0}] = deal('T');
+                    [fielddata{tdata < 0 | isnan(tdata)}] = deal('?');
+                    fielddata = char(fielddata)';
                 otherwise
                     error('Fieldtype not implemented yet for writing')
             end
